@@ -29,15 +29,35 @@ function convertText(textarea, mapping) {
 }
 
 async function handleConvert(type, font, ...mappingNames) {
-    title.innerHTML = type;
-    title.style.fontFamily = font;
     text.style.fontFamily = font;
-    let mapping = {};
-    for (const name of mappingNames) {
-        const m = await loadMapping(name);
-        mapping = Object.assign(mapping, m);
+    title.textContent = type;
+
+    const currentText = text.value;
+    let textToConvert = currentText;
+
+    // If the target is an Erjian version (not 'yijian'),
+    // first convert the current text back to Yijian.
+    if (mappingNames.length > 0 && mappingNames[0] !== 'yijian') {
+        try {
+            const yijianMapping = await loadMapping('yijian');
+            textToConvert = convertText(currentText, yijianMapping);
+            // console.log("Intermediate Yijian:", textToConvert); // Optional: for debugging
+        } catch (error) {
+            console.error("Error loading or applying yijian mapping:", error);
+            text.value = "Error during intermediate conversion to Yijian.";
+            return; // Stop if intermediate conversion fails
+        }
     }
-    convertText(text, mapping);
+
+    // Now, load the target mapping(s) and convert the (potentially intermediate) text.
+    try {
+        const mappings = await Promise.all(mappingNames.map(loadMapping));
+        const combinedMapping = mappings.reduce((acc, map) => ({ ...acc, ...map }), {});
+        text.value = convertText(textToConvert, combinedMapping);
+    } catch (error) {
+        console.error("Error loading or applying target mapping:", error);
+        text.value = "Error during final conversion.";
+    }
 }
 
 document.getElementById('yijian').addEventListener('click', () => {
@@ -50,7 +70,7 @@ document.getElementById('yijian').addEventListener('click', () => {
 
 document.getElementById('erjian-1').addEventListener('click', () => {
     handleConvert(
-        '二简转换𫩏',
+        '二简转换𫩏 (草案一表)', // Update title for clarity
         'Iosevka, Menlo, Monaco, Consolas, "Courier New", erjian1, SimSun, serif',
         'erjian1'
     );
@@ -58,15 +78,15 @@ document.getElementById('erjian-1').addEventListener('click', () => {
 
 document.getElementById('erjian-2').addEventListener('click', () => {
     handleConvert(
-        '二𫈉转换𫩏',
+        '二𫈉转换𫩏 (草案两表)', // Update title for clarity
         'Iosevka, Menlo, Monaco, Consolas, "Courier New", erjian2, SimSun, serif',
-        'erjian1', 'erjian2'
+        'erjian1', 'erjian2' // Keep both mappings as Table 2 includes Table 1 implicitly in its design usually, but explicit ensures coverage
     );
 });
 
 document.getElementById('erjian-xiu').addEventListener('click', () => {
     handleConvert(
-        '二𫈉转换器',
+        '二𫈉转换器 (修订草案)', // Update title for clarity
         'Iosevka, Menlo, Monaco, Consolas, "Courier New", erjianx, SimSun, serif',
         'erjianXiu'
     );
