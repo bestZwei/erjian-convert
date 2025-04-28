@@ -17,15 +17,23 @@ function escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-function convertText(textarea, mapping) {
-    let textVal = textarea.value;
+// Modified convertText: takes input string, returns converted string
+function convertText(inputText, mapping) {
+    let textVal = inputText;
     // 按 key 长度降序，避免短 key 影响长 key 替换
     const keys = Object.keys(mapping).sort((a, b) => b.length - a.length);
     for (const k of keys) {
         const v = mapping[k];
-        textVal = textVal.replace(new RegExp(escapeRegExp(k), 'g'), v);
+        // Ensure v is a string; handle potential non-string values if necessary
+        const replacement = (typeof v === 'string') ? v : String(v);
+        try {
+            textVal = textVal.replace(new RegExp(escapeRegExp(k), 'g'), replacement);
+        } catch (e) {
+            console.error(`Error replacing key: ${k}`, e);
+            // Optionally skip this key or handle the error differently
+        }
     }
-    textarea.value = textVal;
+    return textVal; // Return the converted string
 }
 
 async function handleConvert(type, font, ...mappingNames) {
@@ -40,11 +48,15 @@ async function handleConvert(type, font, ...mappingNames) {
     if (mappingNames.length > 0 && mappingNames[0] !== 'yijian') {
         try {
             const yijianMapping = await loadMapping('yijian');
+            // Use the modified convertText, passing the current string
             textToConvert = convertText(currentText, yijianMapping);
             // console.log("Intermediate Yijian:", textToConvert); // Optional: for debugging
+            if (typeof textToConvert !== 'string') {
+                 throw new Error("Intermediate conversion did not return a string.");
+            }
         } catch (error) {
             console.error("Error loading or applying yijian mapping:", error);
-            text.value = "Error during intermediate conversion to Yijian.";
+            text.value = `Error during intermediate conversion to Yijian: ${error.message}`;
             return; // Stop if intermediate conversion fails
         }
     }
@@ -53,10 +65,11 @@ async function handleConvert(type, font, ...mappingNames) {
     try {
         const mappings = await Promise.all(mappingNames.map(loadMapping));
         const combinedMapping = mappings.reduce((acc, map) => ({ ...acc, ...map }), {});
+        // Use the modified convertText, passing the intermediate string, and assign result to textarea
         text.value = convertText(textToConvert, combinedMapping);
     } catch (error) {
         console.error("Error loading or applying target mapping:", error);
-        text.value = "Error during final conversion.";
+        text.value = `Error during final conversion: ${error.message}`;
     }
 }
 
