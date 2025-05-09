@@ -570,15 +570,18 @@ footer a:hover {
         padding: 8px 5px;
     }
     
+    /* Change to vertical layout for conversion buttons */
     .conversion-buttons {
-        gap: 8px;
+        flex-direction: column;
+        gap: 10px;
     }
     
     .convert-btn {
-        padding: 8px 5px;
-        min-height: 38px;
-        font-size: 0.9rem;
-        max-width: calc(50% - 8px); /* 调整间距 */
+        padding: 10px 5px;
+        min-height: 44px;
+        font-size: 0.95rem;
+        max-width: 100%;
+        width: 100%;
     }
     
     .about-content {
@@ -613,16 +616,18 @@ footer a:hover {
         min-height: 42px;
     }
     
+    /* Ensure vertical layout for conversion buttons */
     .conversion-buttons {
-        flex-direction: column; /* 非常小的屏幕使用列布局 */
+        flex-direction: column;
         align-items: stretch;
     }
     
     .convert-btn {
-        max-width: 100%; /* 填充宽度 */
-        min-height: 36px;
-        padding: 6px 4px;
-        font-size: 0.85rem;
+        max-width: 100%;
+        width: 100%;
+        min-height: 42px;
+        padding: 8px 5px;
+        font-size: 0.9rem;
         margin-bottom: 6px;
     }
 }
@@ -664,9 +669,9 @@ footer a:hover {
     
     @media (max-width: 768px) {
         .conversion-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
         
         .convert-btn {
