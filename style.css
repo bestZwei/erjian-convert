@@ -395,7 +395,7 @@ h1 {
     color: var(--text-secondary);
 }
 
-/* 转换按钮区 */
+/* 转换按钮区 - 修复按钮过大问题 */
 .conversion-buttons {
     display: flex;
     flex-wrap: wrap;
@@ -405,53 +405,24 @@ h1 {
 }
 
 .convert-btn {
-    padding: 14px 24px;
+    padding: 12px 15px;
     background-color: var(--primary-color);
     color: var(--text-on-primary);
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 1.05rem;
+    font-size: 1rem;
     font-weight: 600;
     transition: all 0.3s ease;
-    flex: 1 1 200px;
-    max-width: 230px;
+    flex: 1 1 150px; /* 减小flex-basis */
+    max-width: 210px;
     box-shadow: 0 2px 5px var(--shadow-color);
     position: relative;
     overflow: hidden;
-    min-height: 50px;
+    min-height: 44px; /* 减小最小高度 */
     text-align: center;
-}
-
-.convert-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.2),
-        transparent
-    );
-    transition: 0.5s;
-}
-
-.convert-btn:hover::before {
-    left: 100%;
-}
-
-.convert-btn:hover {
-    background-color: var(--primary-dark);
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px var(--shadow-color);
-}
-
-.convert-btn:active {
-    transform: translateY(-1px);
-    box-shadow: 0 3px 8px var(--shadow-color);
+    line-height: 1.2;
+    height: auto !important; /* 确保高度不被覆盖 */
 }
 
 /* Toast 通知优化 */
@@ -499,7 +470,7 @@ footer a:hover {
     text-decoration: underline;
 }
 
-/* 响应式优化 */
+/* 响应式优化 - 修复移动端按钮过大问题 */
 @media (max-width: 768px) {
     .container {
         padding: 15px;
@@ -539,19 +510,21 @@ footer a:hover {
     }
     
     .conversion-buttons {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 12px;
+        flex-direction: row; /* 改回行布局 */
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+        justify-content: center;
     }
     
     .convert-btn {
-        max-width: 100%;
-        width: 100%;
+        max-width: calc(50% - 10px); /* 两列布局 */
+        width: auto;
+        flex: 0 1 auto; /* 不再自动填充 */
         margin: 0;
-        padding: 12px 10px;
-        height: auto;
-        min-height: 50px;
-        font-size: 1rem;
+        padding: 10px 8px;
+        min-height: 40px;
+        font-size: 0.95rem;
     }
     
     .dropdown-content {
@@ -598,11 +571,14 @@ footer a:hover {
     }
     
     .conversion-buttons {
-        gap: 10px;
+        gap: 8px;
     }
     
     .convert-btn {
-        padding: 12px 8px;
+        padding: 8px 5px;
+        min-height: 38px;
+        font-size: 0.9rem;
+        max-width: calc(50% - 8px); /* 调整间距 */
     }
     
     .about-content {
@@ -636,6 +612,19 @@ footer a:hover {
         padding: 8px 4px;
         min-height: 42px;
     }
+    
+    .conversion-buttons {
+        flex-direction: column; /* 非常小的屏幕使用列布局 */
+        align-items: stretch;
+    }
+    
+    .convert-btn {
+        max-width: 100%; /* 填充宽度 */
+        min-height: 36px;
+        padding: 6px 4px;
+        font-size: 0.85rem;
+        margin-bottom: 6px;
+    }
 }
 
 /* 暗色主题微调 */
@@ -654,4 +643,35 @@ footer a:hover {
 
 .hidden {
     display: none;
+}
+
+/* 修复在某些Android设备上按钮高度问题 */
+@supports (-webkit-appearance:none) {
+    .convert-btn {
+        height: auto !important;
+        appearance: none;
+        -webkit-appearance: none;
+    }
+}
+
+/* Safari和iOS特定修复 */
+@supports (-webkit-touch-callout: none) {
+    .convert-btn {
+        height: auto !important;
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+    
+    @media (max-width: 768px) {
+        .conversion-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        
+        .convert-btn {
+            width: 100%;
+            max-width: 100%;
+        }
+    }
 }
