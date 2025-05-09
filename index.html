@@ -1,30 +1,87 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="zh-CN">
 <head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<link rel="stylesheet" type="text/css" href="style.css" />
-	<title>二简转换器</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="在线二简字转换工具 - 支持草案第一表、草案两表和修订草案" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <title>二简字转换工具</title>
 </head>
 
 <body>
-	<div id="convert-title">二简转换器</div>
-	<textarea id="convert-text" spellcheck="false">// 字表完善中，如遇转换出错请至issue提报。
+    <div class="container">
+        <header>
+            <h1 id="convert-title">二简字转换工具</h1>
+            <div class="theme-toggle">
+                <button id="theme-toggle-btn" aria-label="切换主题">
+                    <svg id="moon-icon" class="theme-icon" viewBox="0 0 24 24">
+                        <path d="M12 11.807A9.002 9.002 0 0 1 10.049 2a9.942 9.942 0 0 0-5.12 2.735c-3.905 3.905-3.905 10.237 0 14.142 3.906 3.906 10.237 3.905 14.143 0a9.944 9.944 0 0 0 2.735-5.119A9.003 9.003 0 0 1 12 11.807z"/>
+                    </svg>
+                    <svg id="sun-icon" class="theme-icon" viewBox="0 0 24 24">
+                        <path d="M12 9c1.65 0 3 1.35 3 3s-1.35 3-3 3-3-1.35-3-3 1.35-3 3-3m0-2c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <div class="intro-section">
+            <div class="about-toggle">
+                <button id="about-toggle-btn">关于二简字 ▼</button>
+            </div>
+            <div id="about-content" class="about-content hidden">
+                <p><strong>二简字</strong>是二级简化汉字的简称，是在现行规范汉字基础上进一步简化的字。1977年《第二次汉字简化方案（草案）》曾公布过一批二简字，但未正式推行。</p>
+                <p>本工具支持：</p>
+                <ul>
+                    <li><strong>草案第一表</strong>：包含248个二简字及偏旁</li>
+                    <li><strong>草案两表</strong>：包含第一表加上第二表的853个字</li>
+                    <li><strong>修订草案</strong>：根据1980年进行修订的方案</li>
+                </ul>
+                <p>工具会先将文本转换回规范汉字，再根据所选方案进行转换。部分有歧义的文本可能无法正确转换。</p>
+            </div>
+        </div>
+
+        <main class="converter-container">
+            <div class="actions-top">
+                <div class="history-dropdown">
+                    <button id="history-btn" class="action-btn">历史记录</button>
+                    <div id="history-list" class="dropdown-content hidden"></div>
+                </div>
+                <div class="text-actions">
+                    <button id="clear-btn" class="action-btn">清空</button>
+                    <button id="copy-btn" class="action-btn">复制</button>
+                </div>
+            </div>
+
+            <textarea id="convert-text" spellcheck="false" placeholder="输入需要转换的文本...">// 字表完善中，如遇转换出错请至issue提报。
 // 受技术限制，部分本身有歧义的词可能无法正确转换。
 
 // 二简字变换ツール
 // 字表の改善は进行中です。误变换が发生した场合は、イシューに报告してください。
 // 技术的な制限により、本来の暧昧な单语は正确に变换されない可能性があります。</textarea>
-	<div>
-		<button class="convert-btn" id="yijian">一简</button>
-		<button class="convert-btn" id="erjian-1">草案第一表</button>
-		<button class="convert-btn" id="erjian-2">草案两表</button>
-		<button class="convert-btn" id="erjian-xiu">修订草案</button>
-	</div>
-	<div>Copyright © 2023 <a href='https://honoka55.github.io'>Honoka55</a> | <a
-			href='https://github.com/Honoka55/erjian-convert'>Repo</a></div>
-	<script src="main.js"></script>
-</body>
 
+            <div id="loading-indicator" class="loading hidden">
+                <div class="spinner"></div>
+                <span>处理中...</span>
+            </div>
+
+            <div class="conversion-buttons">
+                <button class="convert-btn" id="yijian">规范汉字</button>
+                <button class="convert-btn" id="erjian-1">草案第一表</button>
+                <button class="convert-btn" id="erjian-2">草案两表</button>
+                <button class="convert-btn" id="erjian-xiu">修订草案</button>
+            </div>
+        </main>
+
+        <footer>
+            <p>Copyright © 2023-2024 <a href='https://honoka55.github.io'>Honoka55</a> | <a href='https://github.com/Honoka55/erjian-convert'>GitHub</a></p>
+        </footer>
+    </div>
+
+    <div id="toast" class="toast hidden">
+        <span id="toast-message"></span>
+    </div>
+
+    <script src="main.js"></script>
+</body>
 </html>
