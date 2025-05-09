@@ -86,6 +86,7 @@ function addToHistory(inputText, outputText, conversionType) {
     updateHistoryDisplay();
 }
 
+// 改进历史记录的显示
 function updateHistoryDisplay() {
     historyList.innerHTML = '';
     
@@ -101,11 +102,23 @@ function updateHistoryDisplay() {
         const historyItem = document.createElement('div');
         historyItem.className = 'history-item';
         
-        // Format timestamp
+        // 格式化时间戳
         const date = new Date(item.timestamp);
-        const formattedDate = `${date.getMonth()+1}/${date.getDate()} ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
+        const formattedDate = `${date.getMonth()+1}/${date.getDate()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
         
-        historyItem.textContent = `${formattedDate} - ${item.type}: ${item.input}${item.input.length >= 50 ? '...' : ''}`;
+        // 为不同转换类型添加图标
+        let iconHtml = '';
+        if (item.type.includes('草案第一表')) {
+            iconHtml = '<span style="color: var(--primary-color); margin-right: 5px;">①</span>';
+        } else if (item.type.includes('草案两表')) {
+            iconHtml = '<span style="color: var(--primary-color); margin-right: 5px;">②</span>';
+        } else if (item.type.includes('修订草案')) {
+            iconHtml = '<span style="color: var(--primary-color); margin-right: 5px;">✓</span>';
+        } else {
+            iconHtml = '<span style="color: var(--secondary-color); margin-right: 5px;">●</span>';
+        }
+        
+        historyItem.innerHTML = `${iconHtml}${formattedDate} - ${item.type}: ${item.input}${item.input.length >= 50 ? '...' : ''}`;
         
         historyItem.addEventListener('click', () => {
             text.value = item.output;
@@ -122,8 +135,18 @@ function showToast(message, duration = 3000) {
     toastMessage.textContent = message;
     toast.classList.remove('hidden');
     
+    // 添加淡入效果
     setTimeout(() => {
-        toast.classList.add('hidden');
+        toast.style.opacity = "1";
+    }, 10);
+    
+    setTimeout(() => {
+        // 先淡出，然后隐藏
+        toast.style.opacity = "0";
+        setTimeout(() => {
+            toast.classList.add('hidden');
+            toast.style.opacity = ""; // 重置内联样式
+        }, 300);
     }, duration);
 }
 
@@ -230,8 +253,8 @@ function setupEventListeners() {
     // About toggle
     aboutToggleBtn.addEventListener('click', () => {
         aboutContent.classList.toggle('hidden');
-        aboutToggleBtn.textContent = aboutContent.classList.contains('hidden') ? 
-            '关于二简字 ▼' : '关于二简字 ▲';
+        aboutToggleBtn.classList.toggle('active');
+        // 不再改变按钮文本，只通过CSS控制指示器
     });
     
     // Clear button
