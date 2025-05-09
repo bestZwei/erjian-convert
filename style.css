@@ -263,6 +263,7 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
+    min-height: 42px;
 }
 
 .action-btn:first-child {
@@ -400,6 +401,7 @@ h1 {
     flex-wrap: wrap;
     justify-content: center;
     gap: 15px;
+    margin-top: 5px;
 }
 
 .convert-btn {
@@ -417,6 +419,8 @@ h1 {
     box-shadow: 0 2px 5px var(--shadow-color);
     position: relative;
     overflow: hidden;
+    min-height: 50px;
+    text-align: center;
 }
 
 .convert-btn::before {
@@ -525,19 +529,29 @@ footer a:hover {
         flex: 1;
         margin: 0 5px;
         text-align: center;
-        padding: 12px 0;
+        padding: 10px 5px;
+        min-height: 44px;
+        font-size: 0.9rem;
+    }
+    
+    .action-btn span {
+        font-size: 0.9rem;
     }
     
     .conversion-buttons {
         flex-direction: column;
         align-items: stretch;
+        gap: 12px;
     }
     
     .convert-btn {
         max-width: 100%;
         width: 100%;
-        margin: 0 0 10px 0;
-        padding: 15px 0;
+        margin: 0;
+        padding: 12px 10px;
+        height: auto;
+        min-height: 50px;
+        font-size: 1rem;
     }
     
     .dropdown-content {
@@ -572,6 +586,23 @@ footer a:hover {
     
     .action-btn, .convert-btn {
         font-size: 0.9rem;
+        min-height: 46px;
+    }
+    
+    .text-actions {
+        gap: 8px;
+    }
+    
+    .action-btn {
+        padding: 8px 5px;
+    }
+    
+    .conversion-buttons {
+        gap: 10px;
+    }
+    
+    .convert-btn {
+        padding: 12px 8px;
     }
     
     .about-content {
@@ -582,6 +613,28 @@ footer a:hover {
         width: 90%;
         padding: 12px 15px;
         text-align: center;
+    }
+}
+
+/* 修复在超小屏幕上的按钮显示问题 */
+@media (max-width: 360px) {
+    .action-btn svg {
+        width: 14px;
+        height: 14px;
+    }
+    
+    .action-btn span {
+        font-size: 0.85rem;
+        margin-left: 4px !important;
+    }
+    
+    .text-actions {
+        gap: 6px;
+    }
+    
+    .action-btn {
+        padding: 8px 4px;
+        min-height: 42px;
     }
 }
 
